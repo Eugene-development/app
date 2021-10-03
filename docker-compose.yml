@@ -1,0 +1,60 @@
+
+version: '3'
+services:
+  nginx:
+    container_name: some-nginx
+    image: nginx:1.13
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+    depends_on:
+      - app
+
+  app:
+    restart: always
+    build: ./app
+    working_dir: /app
+    volumes:
+      - ./app:/app
+    expose:
+      - "8080"
+    command: mvn clean spring-boot:run
+
+#version: '3'
+#services:
+#
+#  #PHP Service
+#  app:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#    container_name: "${COMPOSE_PROJECT_NAME}_JAVA"
+#    restart: unless-stopped
+#    tty: true
+#    environment:
+#      SERVICE_NAME: app
+#      SERVICE_TAGS: dev
+#    working_dir: /var/www
+#    networks:
+#      - javaspring-network
+#  #Nginx Service
+#  webserver:
+#    image: nginx:alpine
+#    container_name: "${COMPOSE_PROJECT_NAME}_NGINX"
+#    restart: unless-stopped
+#    tty: true
+#    ports:
+#      - "8080:8080"
+#    volumes:
+#      - ./:/var/www
+#      - ./docker/nginx/conf.d/:/etc/nginx/conf.d/
+#    networks:
+#      - javaspring-network
+#
+##Docker Networks
+#networks:
+#  javaspring-network:
+#    driver: bridge
